@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letter Under The Moon</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Georgia, serif;
+}
+
+body{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:linear-gradient(to bottom,#030514,#08142d,#0c1f4f);
+    position:relative;
+}
+
+/* Stars */
+.stars{
+    position:absolute;
+    inset:0;
+}
+
+.star{
+    position:absolute;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+    from{opacity:0.2;}
+    to{opacity:1;}
+}
+
+/* Moon */
+.moon{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:
+    radial-gradient(circle at 30% 30%,
+    #ffffff,
+    #f7f4d6,
+    #ddd);
+    box-shadow:
+    0 0 40px white,
+    0 0 80px rgba(255,255,255,0.5);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+
+    color:#555;
+    font-size:28px;
+    cursor:pointer;
+
+    animation:pulse 2.5s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{
+        transform:translate(-50%,-50%) scale(1);
+    }
+    50%{
+        transform:translate(-50%,-50%) scale(1.03);
+    }
+}
+
+/* Bird */
+.bird{
+    position:absolute;
+    top:45%;
+    left:-100px;
+    font-size:50px;
+    display:none;
+}
+
+.fly{
+    display:block;
+    animation:birdFly 5s forwards;
+}
+
+@keyframes birdFly{
+    0%{
+        left:-100px;
+    }
+
+    50%{
+        left:40%;
+    }
+
+    100%{
+        left:120%;
+        top:25%;
+    }
+}
+
+/* Letter */
+.letter{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+
+    width:170px;
+    height:110px;
+
+    background:#fffaf0;
+
+    border-radius:10px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    color:#555;
+
+    font-size:18px;
+
+    text-align:center;
+}
+
+.letter.show{
+    display:flex;
+    animation:appear 0.8s;
+}
+
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:translate(-50%,-40%);
+    }
+
+    to{
+        opacity:1;
+        transform:translate(-50%,-50%);
+    }
+}
+
+/* Message */
+.message{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.75);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+}
+
+.message-box{
+    width:100%;
+    max-width:350px;
+
+    background:#fffaf0;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    color:#444;
+
+    line-height:1.8;
+
+    font-size:15px;
+}
+
+.close-btn{
+    margin-top:20px;
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#1f326d;
+
+    color:white;
+}
+
+/* Music Button */
+.music-btn{
+    position:fixed;
+
+    left:15px;
+    bottom:20px;
+
+    z-index:100;
+
+    border:none;
+
+    border-radius:30px;
+
+    padding:12px 16px;
+
+    background:rgba(255,255,255,0.2);
+
+    backdrop-filter:blur(8px);
+
+    color:white;
+
+    font-size:14px;
+}
+
+@media (max-width:480px){
+
+    .moon{
+        width:150px;
+        height:150px;
+        font-size:24px;
+    }
+
+    .letter{
+        width:160px;
+        height:100px;
+    }
+
+    .message-box{
+        font-size:14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars" id="stars"></div>
+
+<button class="music-btn" onclick="toggleMusic()">
+🎵 Music
+</button>
+
+<audio id="music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="moon" onclick="startScene()">
+    Click Me!
+</div>
+
+<div class="bird" id="bird">
+    🕊️
+</div>
+
+<div class="letter" id="letter" onclick="openLetter()">
+    ✉️ Open Letter
+</div>
+
+<div class="message" id="message">
+    <div class="message-box">
+
+        hello, dear.<br><br>
+
+        haiihiiiii,happy birthday,um, idk what to say, 
+      but happy birthday,hope you'll always happy,
+      and always healthy,semoga impian kamu terkabulll
+      , makasi suda berjuang selama ini,
+      im very very proud of u, kamu kerenn o(〃＾▽＾〃)o.<br><br>
+
+        —love, rei.
+
+        <button class="close-btn" onclick="closeLetter()">
+            Close
+        </button>
+
+    </div>
+</div>
+
+<script>
+/* Generate Stars */
+const stars=document.getElementById("stars");
+
+for(let i=0;i<120;i++){
+
+    const star=document.createElement("div");
+
+    star.className="star";
+
+    const size=Math.random()*3+1;
+
+    star.style.width=size+"px";
+    star.style.height=size+"px";
+
+    star.style.left=Math.random()*100+"%";
+    star.style.top=Math.random()*100+"%";
+
+    star.style.animationDelay=Math.random()*2+"s";
+
+    stars.appendChild(star);
+}
+
+/* Music */
+function toggleMusic(){
+
+    const music=document.getElementById("music");
+
+    if(music.paused){
+
+        music.play();
+
+    }else{
+
+        music.pause();
+    }
+}
+
+/* Scene */
+let started=false;
+
+function startScene(){
+
+    if(started) return;
+
+    started=true;
+
+    const bird=document.getElementById("bird");
+
+    bird.classList.add("fly");
+
+    setTimeout(()=>{
+
+        document.getElementById("letter")
+        .classList.add("show");
+
+    },2500);
+}
+
+/* Open Letter */
+function openLetter(){
+
+    document.getElementById("message")
+    .style.display="flex";
+}
+
+/* Close */
+function closeLetter(){
+
+    document.getElementById("message")
+    .style.display="none";
+}
+</script>
+
+</body>
+</html>
